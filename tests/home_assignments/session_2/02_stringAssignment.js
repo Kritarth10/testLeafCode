@@ -31,3 +31,36 @@ console.log(palindrome(originalString));
 
 
 //Write a function to check if two strings are anagrams.
+    const string1map = new Map();     //declaring two maps that will store the frequency of each character
+    const string2map = new Map();
+ 
+// this function is responsible for preparing the map which will store the character and it's frequency.
+function prepareMap(stringMap,strings){
+    for(let i=0;i<strings.length;i++){
+        if(stringMap.has(strings[i])){                      //checking if map has that character
+            let value = stringMap.get(strings[i])+1;        //if it does, increase the value
+            stringMap.set(strings[i],value);
+        }
+        else{
+            stringMap.set(strings[i],1);                    //else set it to 1
+        }
+    }
+}    
+
+function anagrams(string1,string2){
+    if(string1.length!=string2.length)
+    return false;
+    prepareMap(string1map,string1);                          
+    prepareMap(string2map,string2);
+
+    if(string1map.size != string2map.size)                 //checking if the map size is equal or not, in case if map size is not then that would mean
+    return false;                                          //same characters do not exist in both maps
+    for( let [key,val] of string1map){                       //this loop is iterating over first map and fetching the key from the second map          
+        let value2 = string2map.get(key);              
+        if(val !== value2 || (value2 == undefined && !string2map.has(key)))      //checking whether the value for same key matches or not, also whether same value exist in map2 or not
+        return false
+    }
+    return true;
+}
+console.log(anagrams('listen', 'sieent'));
+
