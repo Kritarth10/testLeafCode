@@ -1,0 +1,11 @@
+[{
+    "test_case":"TC001",
+    "username":"radhakrishnan@testleaf.com",
+    "password":"Sparrow@123",
+    "url":"https://login.salesforce.com"
+},{
+    "test_case":"TC002",
+    "username":"kannugovil@3logic.com",
+    "password":"Krit@rth_1",
+    "url":"https://login.salesforce.com"
+}]
