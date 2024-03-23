@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "a66c4d82-0547-46f9-ae4e-c911f280e041",
+		"name": "Salesforce Home Assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12018298"
+	},
+	"item": [
+		{
+			"name": "OAUTH Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();\r",
+							"var token = response.access_token;\r",
+							"pm.collectionVariables.set(\"accessToken\", token);\r",
+							"pm.collectionVariables.set(\"salesforceuri\",response.instance_url)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"access_token\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "3MVG9q4K8Dm94dAypzQ1seqvpeJukTyMgGqabOFZXEMqd.31H34x.Cc3ajtOyXkboZhqTYlOg14TJnQedlhkF",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "4B26E7C5D9C0FCECB6F959A60C7C2B236A3F006C93147A87F52A82AAB184914D",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "kannugovil@3logic.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Krit@rth_1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.salesforce.com/services/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"salesforce",
+						"com"
+					],
+					"path": [
+						"services",
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Opportunity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();\r",
+							"var oppId = response.id;\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"Success Value\", function () {\r",
+							"    pm.expect(response.success).to.eql(true);\r",
+							"});\r",
+							"pm.collectionVariables.set(\"Opp_Id\", oppId);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"Name\": \"{{$randomLoremWords}}\",\r\n\"stagename\":\"Needs Analysis\",\r\n\"CloseDate\":\"2025-03-26\",\r\n\"Probability\": \"10\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{salesforceuri}}/services/data/v59.0/sobjects/Opportunity",
+					"host": [
+						"{{salesforceuri}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v59.0",
+						"sobjects",
+						"Opportunity"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Opportunity",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"stagename\":\"Prospecting\",\r\n\"Type\":\"New Customer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{salesforceuri}}/services/data/v59.0/sobjects/Opportunity/{{Opp_Id}}",
+					"host": [
+						"{{salesforceuri}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v59.0",
+						"sobjects",
+						"Opportunity",
+						"{{Opp_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();\r",
+							"console.log(response.records[0].Id);\r",
+							"pm.collectionVariables.set(\"latestOppId\",response.records[0].Id)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Done should be true\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.done).to.eql(true);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{salesforceuri}}/services/data/v59.0/query?q=SELECT FIELDS(ALL) FROM Opportunity LIMIT 200",
+					"host": [
+						"{{salesforceuri}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v59.0",
+						"query"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "SELECT FIELDS(ALL) FROM Opportunity LIMIT 200"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{salesforceuri}}/services/data/v59.0/sobjects/Opportunity/{{latestOppId}}",
+					"host": [
+						"{{salesforceuri}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v59.0",
+						"sobjects",
+						"Opportunity",
+						"{{latestOppId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "salesforceuri",
+			"value": ""
+		},
+		{
+			"key": "Opp_Id",
+			"value": ""
+		},
+		{
+			"key": "latestOppId",
+			"value": ""
+		}
+	]
+}
